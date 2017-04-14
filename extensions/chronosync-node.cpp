@@ -34,6 +34,7 @@ ChronoSyncNode::ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
       sync_prefix_(sync_prefix),
       user_prefix_(user_prefix),
       routing_prefix_(routing_prefix),
+      seed_(seed),
       rengine_(seed),
       rdist_(500, 10000) {}
 
@@ -73,7 +74,7 @@ void ChronoSyncNode::Init() {
   routable_user_prefix.append(routing_prefix_).append(user_prefix_);
 
   socket_.reset(new chronosync::Socket(
-      sync_prefix_, routable_user_prefix, face_, key_chain_,
+      sync_prefix_, routable_user_prefix, face_, key_chain_, seed_,
       std::bind(&ChronoSyncNode::ProcessSyncUpdate, this, _1)));
 }
 

@@ -37,7 +37,7 @@ namespace ndn {
 
 class ChronoSyncApp : public Application {
  public:
-  typedef void (*DataEventTraceCallback)(const std::string&, bool);
+  typedef void (*DataEventTraceCallback)(std::string, bool);
 
   static TypeId GetTypeId() {
     static TypeId tid =
@@ -73,10 +73,16 @@ class ChronoSyncApp : public Application {
                                               routing_prefix_,
                                               ndn::StackHelper::getKeyChain()));
     instance_->Init();
+    instance_->ConnectDataEventTrace(
+        std::bind(&ChronoSyncApp::TraceDataEvent, this, _1, _2));
     instance_->Run();
   }
 
   virtual void StopApplication() { instance_.reset(); }
+
+  void TraceDataEvent(const std::string& content, bool is_local) {
+    data_event_trace_(content, is_local);
+  }
 
  private:
   std::unique_ptr<::ndn::ChronoSyncNode> instance_;

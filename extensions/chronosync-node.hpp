@@ -36,6 +36,8 @@ namespace ndn {
 
 class ChronoSyncNode {
  public:
+  using DataEventTraceCb = std::function<void(const std::string&, bool)>;
+
   ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
                  const Name& user_prefix, const Name& routing_prefix,
                  KeyChain& keychain);
@@ -51,6 +53,10 @@ class ChronoSyncNode {
 
   void Run();
 
+  void ConnectDataEventTrace(DataEventTraceCb cb) {
+    data_event_trace_.connect(cb);
+  }
+
  private:
   boost::asio::io_service io_service_;
   Face face_;
@@ -63,10 +69,11 @@ class ChronoSyncNode {
 
   std::unique_ptr<chronosync::Socket> socket_;
 
+  uint32_t seed_;
   std::mt19937 rengine_;
   std::uniform_int_distribution<> rdist_;
 
-  uint64_t counter_;
+  uint64_t counter_ = 0;
   util::Signal<ChronoSyncNode, const std::string&, bool> data_event_trace_;
 };
 
