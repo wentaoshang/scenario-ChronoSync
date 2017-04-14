@@ -26,6 +26,8 @@
 
 #include "ns3/ndnSIM-module.h"
 #include "ns3/string.h"
+#include "ns3/trace-source-accessor.h"
+#include "ns3/traced-callback.h"
 #include "ns3/uinteger.h"
 
 #include "chronosync-node.hpp"
@@ -35,6 +37,8 @@ namespace ndn {
 
 class ChronoSyncApp : public Application {
  public:
+  typedef void (*DataEventTraceCallback)(const std::string&, bool);
+
   static TypeId GetTypeId() {
     static TypeId tid =
         TypeId("ChronoSyncApp")
@@ -52,7 +56,12 @@ class ChronoSyncApp : public Application {
             .AddAttribute(
                 "RandomSeed", "Seed used for the random number generator.",
                 UintegerValue(0), MakeUintegerAccessor(&ChronoSyncApp::seed_),
-                MakeUintegerChecker<uint32_t>());
+                MakeUintegerChecker<uint32_t>())
+            .AddTraceSource(
+                "DataEvent",
+                "Event of publishing or receiving new data in the sync node.",
+                MakeTraceSourceAccessor(&ChronoSyncApp::data_event_trace_),
+                "ns3::ndn::vsync::SimpleNodeApp::DataEventTraceCallback");
 
     return tid;
   }
@@ -75,6 +84,7 @@ class ChronoSyncApp : public Application {
   Name user_prefix_;
   Name routing_prefix_;
   uint32_t seed_;
+  TracedCallback<const std::string&, bool> data_event_trace_;
 };
 
 }  // namespace ndn

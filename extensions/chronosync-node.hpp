@@ -30,6 +30,7 @@
 #include "src/socket.hpp"
 
 #include <ndn-cxx/face.hpp>
+#include <ndn-cxx/util/signal.hpp>
 
 namespace ndn {
 
@@ -64,6 +65,9 @@ class ChronoSyncNode {
 
   std::mt19937 rengine_;
   std::uniform_int_distribution<> rdist_;
+
+  uint64_t counter_;
+  util::Signal<ChronoSyncNode, const std::string&, bool> data_event_trace_;
 };
 
 }  // namespace ndn

@@ -38,21 +38,19 @@ ChronoSyncNode::ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
       rdist_(500, 10000) {}
 
 void ChronoSyncNode::PublishData() {
-  std::string msg = "Hello from " + user_prefix_.toUri();
+  std::string msg = user_prefix_.toUri() + ":" + std::to_string(++counter_);
   socket_->publishData(reinterpret_cast<const uint8_t*>(msg.data()), msg.size(),
                        ndn::time::milliseconds(4000));
+  data_event_trace_(msg, true);
 
   scheduler_.scheduleEvent(ndn::time::milliseconds(rdist_(rengine_)),
                            std::bind(&ChronoSyncNode::PublishData, this));
 }
 
 void ChronoSyncNode::ProcessData(const shared_ptr<const Data>& data) {
-  Name::Component peerName = data->getName().at(3);
-
-  std::string s(reinterpret_cast<const char*>(data->getContent().value()),
-                data->getContent().value_size());
-
-  std::cout << "Data received from " << peerName.toUri() << " : " << s << "\n";
+  std::string msg(reinterpret_cast<const char*>(data->getContent().value()),
+                  data->getContent().value_size());
+  data_event_trace_(msg, false);
 }
 
 void ChronoSyncNode::ProcessSyncUpdate(
