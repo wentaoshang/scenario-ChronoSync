@@ -36,7 +36,7 @@ static void DataEvent(std::string user_prefix, const std::string& content,
 }
 
 int main(int argc, char* argv[]) {
-  double TotalRunTimeSeconds = 3600.0;
+  double TotalRunTimeSeconds = 600.0;
   double LossRate = 0.0;
   bool Synchronized = false;
 
