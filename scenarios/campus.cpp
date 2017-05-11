@@ -36,7 +36,7 @@ static void DataEvent(std::string user_prefix, const std::string& content,
 }
 
 int main(int argc, char* argv[]) {
-  double TotalRunTimeSeconds = 600.0;
+  double TotalRunTimeSeconds = 100.0;
   double LossRate = 0.0;
   bool Synchronized = false;
 
@@ -101,6 +101,9 @@ int main(int argc, char* argv[]) {
   ndn::GlobalRoutingHelper::CalculateRoutes();
 
   Simulator::Stop(Seconds(TotalRunTimeSeconds));
+
+  ndn::L3RateTracer::InstallAll("campus-rate-trace.txt",
+                                Seconds(TotalRunTimeSeconds - 0.5));
 
   Simulator::Run();
   Simulator::Destroy();

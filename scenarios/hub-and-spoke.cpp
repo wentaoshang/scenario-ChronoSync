@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
                      StringValue("ERROR_UNIT_PACKET"));
 
   int N = 10;
-  double TotalRunTimeSeconds = 3600.0;
+  double TotalRunTimeSeconds = 100.0;
   bool Synchronized = false;
   double LossRate = 0.0;
   std::string LinkDelay = "10ms";
@@ -126,6 +126,9 @@ int main(int argc, char* argv[]) {
   }
 
   Simulator::Stop(Seconds(TotalRunTimeSeconds));
+
+  ndn::L3RateTracer::InstallAll("rate-trace.txt",
+                                Seconds(TotalRunTimeSeconds - 0.5));
 
   Simulator::Run();
   Simulator::Destroy();

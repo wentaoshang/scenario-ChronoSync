@@ -36,7 +36,7 @@ ChronoSyncNode::ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
       routing_prefix_(routing_prefix),
       seed_(seed),
       rengine_(seed),
-      rdist_(500, 10000) {}
+      rdist_(1.0) {}
 
 void ChronoSyncNode::PublishData() {
   std::string msg = user_prefix_.toUri() + ":" + std::to_string(++counter_);
@@ -44,8 +44,9 @@ void ChronoSyncNode::PublishData() {
                        ndn::time::milliseconds(4000));
   data_event_trace_(msg, true);
 
-  scheduler_.scheduleEvent(ndn::time::milliseconds(rdist_(rengine_)),
-                           std::bind(&ChronoSyncNode::PublishData, this));
+  scheduler_.scheduleEvent(
+      ndn::time::milliseconds(static_cast<int>(1000.0 * rdist_(rengine_))),
+      std::bind(&ChronoSyncNode::PublishData, this));
 }
 
 void ChronoSyncNode::ProcessData(const shared_ptr<const Data>& data) {
@@ -79,8 +80,9 @@ void ChronoSyncNode::Init() {
 }
 
 void ChronoSyncNode::Run() {
-  scheduler_.scheduleEvent(ndn::time::milliseconds(rdist_(rengine_)),
-                           std::bind(&ChronoSyncNode::PublishData, this));
+  scheduler_.scheduleEvent(
+      ndn::time::milliseconds(static_cast<int>(1000.0 * rdist_(rengine_))),
+      std::bind(&ChronoSyncNode::PublishData, this));
 }
 
 }  // namespace ndn

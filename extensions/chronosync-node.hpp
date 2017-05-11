@@ -71,7 +71,7 @@ class ChronoSyncNode {
 
   uint32_t seed_;
   std::mt19937 rengine_;
-  std::uniform_int_distribution<> rdist_;
+  std::exponential_distribution<> rdist_;
 
   uint64_t counter_ = 0;
   util::Signal<ChronoSyncNode, const std::string&, bool> data_event_trace_;
