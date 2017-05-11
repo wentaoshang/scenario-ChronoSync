@@ -24,6 +24,7 @@
 #ifndef CHRONOSYNC_APP_HPP_
 #define CHRONOSYNC_APP_HPP_
 
+#include "ns3/double.h"
 #include "ns3/ndnSIM-module.h"
 #include "ns3/string.h"
 #include "ns3/trace-source-accessor.h"
@@ -57,6 +58,12 @@ class ChronoSyncApp : public Application {
                 "RandomSeed", "Seed used for the random number generator.",
                 UintegerValue(0), MakeUintegerAccessor(&ChronoSyncApp::seed_),
                 MakeUintegerChecker<uint32_t>())
+            .AddAttribute(
+                "DataRate",
+                "Data publishing rate (packets per second) for the sync node.",
+                DoubleValue(1.0),
+                MakeDoubleAccessor(&ChronoSyncApp::data_rate_),
+                MakeDoubleChecker<double>())
             .AddTraceSource(
                 "DataEvent",
                 "Event of publishing or receiving new data in the sync node.",
@@ -69,9 +76,9 @@ class ChronoSyncApp : public Application {
  protected:
   // inherited from Application base class.
   virtual void StartApplication() {
-    instance_.reset(new ::ndn::ChronoSyncNode(seed_, sync_prefix_, user_prefix_,
-                                              routing_prefix_,
-                                              ndn::StackHelper::getKeyChain()));
+    instance_.reset(new ::ndn::ChronoSyncNode(
+        seed_, sync_prefix_, user_prefix_, routing_prefix_,
+        ndn::StackHelper::getKeyChain(), data_rate_));
     instance_->Init();
     instance_->ConnectDataEventTrace(
         std::bind(&ChronoSyncApp::TraceDataEvent, this, _1, _2));
@@ -90,6 +97,8 @@ class ChronoSyncApp : public Application {
   Name user_prefix_;
   Name routing_prefix_;
   uint32_t seed_;
+  double data_rate_;
+
   TracedCallback<const std::string&, bool> data_event_trace_;
 };
 

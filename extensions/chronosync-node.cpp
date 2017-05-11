@@ -27,7 +27,8 @@ namespace ndn {
 
 ChronoSyncNode::ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
                                const Name& user_prefix,
-                               const Name& routing_prefix, KeyChain& keychain)
+                               const Name& routing_prefix, KeyChain& keychain,
+                               double data_rate)
     : face_(io_service_),
       scheduler_(io_service_),
       key_chain_(keychain),
@@ -36,7 +37,7 @@ ChronoSyncNode::ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
       routing_prefix_(routing_prefix),
       seed_(seed),
       rengine_(seed),
-      rdist_(1.0) {}
+      rdist_(data_rate) {}
 
 void ChronoSyncNode::PublishData() {
   std::string msg = user_prefix_.toUri() + ":" + std::to_string(++counter_);

@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
   double TotalRunTimeSeconds = 100.0;
   double LossRate = 0.0;
   bool Synchronized = false;
+  double DataRate = 1.0;
 
   CommandLine cmd;
   cmd.AddValue("TotalRunTimeSeconds",
@@ -49,6 +50,8 @@ int main(int argc, char* argv[]) {
       "Synchronized",
       "If set, the data publishing events from all nodes are synchronized",
       Synchronized);
+  cmd.AddValue("DataRate", "Data publishing rate (packets per second)",
+               DataRate);
   cmd.Parse(argc, argv);
 
   AnnotatedTopologyReader topologyReader("", 25);
@@ -86,6 +89,7 @@ int main(int argc, char* argv[]) {
     helper.SetAttribute("UserPrefix", StringValue(user_prefix));
     helper.SetAttribute("StartTime", TimeValue(Seconds(1.0)));
     helper.SetAttribute("StopTime", TimeValue(Seconds(TotalRunTimeSeconds)));
+    helper.SetAttribute("DataRate", DoubleValue(DataRate));
     if (!Synchronized)
       helper.SetAttribute("RandomSeed", UintegerValue(seed->GetInteger()));
     helper.Install(node);

@@ -40,7 +40,7 @@ class ChronoSyncNode {
 
   ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
                  const Name& user_prefix, const Name& routing_prefix,
-                 KeyChain& keychain);
+                 KeyChain& keychain, double data_rate);
 
   void PublishData();
 
