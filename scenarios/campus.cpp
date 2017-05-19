@@ -36,7 +36,7 @@ static void DataEvent(std::string user_prefix, const std::string& content,
 }
 
 int main(int argc, char* argv[]) {
-  double TotalRunTimeSeconds = 100.0;
+  double TotalRunTimeSeconds = 60.0;
   double LossRate = 0.0;
   bool Synchronized = false;
   double DataRate = 1.0;
@@ -106,16 +106,18 @@ int main(int argc, char* argv[]) {
 
   Simulator::Stop(Seconds(TotalRunTimeSeconds));
 
-  ndn::L3RateTracer::InstallAll("campus-rate-trace.txt",
+  std::string file_name =
+      "results/CS-CampusRunTime" + std::to_string(TotalRunTimeSeconds);
+  if (Synchronized) file_name += "Sync";
+  if (LossRate > 0.0) file_name += "LR" + std::to_string(LossRate);
+  if (DataRate != 1.0) file_name += "DR" + std::to_string(DataRate);
+
+  ndn::L3RateTracer::InstallAll(file_name + "-rate-trace.txt",
                                 Seconds(TotalRunTimeSeconds - 0.5));
 
   Simulator::Run();
   Simulator::Destroy();
 
-  std::string file_name =
-      "results/CS-CampusRunTime" + std::to_string(TotalRunTimeSeconds);
-  if (Synchronized) file_name += "Sync";
-  if (LossRate > 0.0) file_name += "LR" + std::to_string(LossRate);
   std::fstream fs(file_name, std::ios_base::out | std::ios_base::trunc);
 
   int count = 0;
