@@ -40,9 +40,10 @@ ChronoSyncNode::ChronoSyncNode(uint32_t seed, const Name& sync_prefix,
       rdist_(data_rate) {}
 
 void ChronoSyncNode::PublishData() {
+  if (counter_ >= 100) return;
   std::string msg = user_prefix_.toUri() + ":" + std::to_string(++counter_);
   socket_->publishData(reinterpret_cast<const uint8_t*>(msg.data()), msg.size(),
-                       ndn::time::milliseconds(4000));
+                       ndn::time::milliseconds(3600000));
   data_event_trace_(msg, true);
 
   scheduler_.scheduleEvent(
@@ -66,7 +67,7 @@ void ChronoSyncNode::ProcessSyncUpdate(
     for (chronosync::SeqNo seq = updates[i].low; seq <= updates[i].high;
          ++seq) {
       socket_->fetchData(updates[i].session, seq,
-                         std::bind(&ChronoSyncNode::ProcessData, this, _1), 2);
+                         std::bind(&ChronoSyncNode::ProcessData, this, _1), 5);
     }
   }
 }
